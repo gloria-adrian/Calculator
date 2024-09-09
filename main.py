@@ -5,13 +5,13 @@ from kivy.uix.textinput import TextInput
 
 class MainApp(App):
     def build(self):
-        self.icon = "calculator.png.png"
+        self.icon = "calculator.png"  # Ensure this file exists in your working directory
         self.operators = ["/", "*", "+", "-"]
         self.last_was_operator = None
         self.last_button = None
 
-        main_layout = BoxLayout(orientation = "vertical")
-        self.solution = TextInput(background_color = "black", foreground_color = "white",
+        main_layout = BoxLayout(orientation="vertical")
+        self.solution = TextInput(background_color="black", foreground_color="white",
                                   multiline=False, halign="right", font_size=55, readonly=True)
 
         main_layout.add_widget(self.solution)
@@ -26,7 +26,7 @@ class MainApp(App):
             h_layout = BoxLayout()
             for label in row:
                 button = Button(
-                    text = label, font_size=38, background_color = "grey",
+                    text=label, font_size=38, background_color="grey",
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
                 )
                 button.bind(on_press=self.on_button_press)
@@ -34,7 +34,7 @@ class MainApp(App):
             main_layout.add_widget(h_layout)
 
         equal_button = Button(
-            text = "=", font_size=38, background_color = "grey",
+            text="=", font_size=38, background_color="grey",
             pos_hint={"center_x": 0.5, "center_y": 0.5},
         )
         equal_button.bind(on_press=self.on_solution)
@@ -49,7 +49,7 @@ class MainApp(App):
         if button_text == "C":
             self.solution.text = ""
         else:
-            if current and(
+            if current and (
                 self.last_was_operator and button_text in self.operators):
                 return 
             elif current == "" and button_text in self.operators:
@@ -60,14 +60,16 @@ class MainApp(App):
         self.last_button = button_text
         self.last_was_operator = self.last_button in self.operators
 
-    
     def on_solution(self, instance):
         text = self.solution.text
         if text:
-            solution = str(eval(self.solution.text))
-            self.solution.text = solution
+            try:
+                # Safe evaluation
+                solution = str(eval(self.solution.text))
+                self.solution.text = solution
+            except Exception as e:
+                self.solution.text = "Error"
 
-
-if __name__ == "_main_":
+if __name__ == "__main__":
     app = MainApp()
     app.run()
